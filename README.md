@@ -51,55 +51,14 @@ Effect: a junk-drawer phone + a USB cable = a 24/7 remote Linux server.
 
 **Minimum requirements:** Android 6.0 (API 23) or newer, ARM 32-bit or 64-bit.
 
-## Using the Terminal
+## Upgrading
 
-Once connected, you have a real Alpine Linux shell. Common commands:
+New releases of SamDocker can be installed on top of old ones — your installed packages, files, and tokens persist. Just download the new `samdocker.apk` and tap install; Android will replace the old version.
 
-```bash
-# Install packages (Alpine native)
-apk add nginx python3 py3-pip
+## Reporting Issues
 
-# Or use the apt compatibility wrapper
-apt install htop
-
-# Git clone (private repos need token in URL)
-git clone https://github.com/octocat/Hello-World.git
-git clone https://USER:TOKEN@github.com/yourname/yourrepo.git
-
-# Shell chains work too
-cd /tmp && git clone https://github.com/octocat/Hello-World.git && cd Hello-World && git log --oneline -3
-
-# Service management (via systemctl wrapper → openrc)
-systemctl start sshd
-systemctl enable sshd
-```
-
-### Long-running tasks (training, servers, watchers)
-
-Anything that takes longer than ~2 minutes should run in the **background**, otherwise the tunnel times out and the task gets killed. Use the `bg:` prefix in the web terminal:
-
-```
-bg: make train
-bg: python3 long_train.py
-bg: ./serve.sh
-```
-
-This starts a samcommand background job — you'll see the job ID and a tip to click the **⚡ Jobs** button (top-right of the terminal) to view live output, kill the job, or check its exit code. Jobs survive tunnel disconnects and run indefinitely.
-
-### Compile / build native code
-
-`gcc`, `g++`, `make`, `libgomp` (OpenMP), and `openblas-dev` are preinstalled. Default `CFLAGS` are set in `/etc/profile.d/samdocker.sh` to `-O2 -fno-strict-aliasing -fopenmp -funroll-loops` — this avoids proot SIGSEGV that `-march=native` and `-ffast-math` can trigger.
-
-```bash
-git clone https://github.com/your/repo.git && cd repo
-make            # works out of the box
-./binary        # run the result
-```
-
-If you `apk add` any package with hardlink-based binaries (gcc, binutils, etc.), the apk wrapper auto-repairs the broken hardlinks — no manual `ln -sf` needed.
-
-## Source Code
-
-- **App + build scripts**: [samaidev/samdocker](https://github.com/samaidev/samdocker) (source code, build docs, architecture)
-- **Releases**: this repo (samdocker_r) — prebuilt APKs for direct download
-- **Embedded terminal server**: [samaidev/samcommand](https://github.com/samaidev/samcommand) (Go binary that serves the web terminal)
+Please open an issue at https://github.com/samaidev/samdocker_r/issues with:
+- Phone model and Android version
+- SamDocker version (shown on the app's main screen)
+- Steps to reproduce
+- Logcat snippet if possible

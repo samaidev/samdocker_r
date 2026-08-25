@@ -49,55 +49,14 @@
 
 **最低要求：** Android 6.0（API 23）或更高，ARM 32 位或 64 位。
 
-## 终端使用示例
+## 升级
 
-连上后就是一个真实的 Alpine Linux shell。常用命令：
+新版 SamDocker 可以直接覆盖安装旧版 —— 已装的包、文件、token 都会保留。只需下载新的 `samdocker.apk` 点击安装即可，Android 会自动替换旧版本。
 
-```bash
-# 安装包（Alpine 原生）
-apk add nginx python3 py3-pip
+## 反馈问题
 
-# 或用 apt 兼容层
-apt install htop
-
-# git clone（私有仓库需在 URL 里嵌入 token）
-git clone https://github.com/octocat/Hello-World.git
-git clone https://USER:TOKEN@github.com/yourname/yourrepo.git
-
-# 命令链也支持
-cd /tmp && git clone https://github.com/octocat/Hello-World.git && cd Hello-World && git log --oneline -3
-
-# 服务管理（通过 systemctl 兼容层 → openrc）
-systemctl start sshd
-systemctl enable sshd
-```
-
-### 长任务（训练、服务、监控）
-
-任何超过 2 分钟的任务都应该跑在**后台**，否则 tunnel 超时会被杀。在 web terminal 里用 `bg:` 前缀：
-
-```
-bg: make train
-bg: python3 long_train.py
-bg: ./serve.sh
-```
-
-会启动一个 samcommand 后台任务 — 你会看到 job ID，并提示点击终端右上角的 **⚡ Jobs** 按钮查看实时输出、终止任务、查看退出码。任务会在 tunnel 断连后继续跑，没有时间限制。
-
-### 编译 / 构建原生代码
-
-`gcc`、`g++`、`make`、`libgomp` (OpenMP)、`openblas-dev` 都已预装。`/etc/profile.d/samdocker.sh` 默认设了 `CFLAGS=-O2 -fno-strict-aliasing -fopenmp -funroll-loops` —— 避开 `-march=native` 和 `-ffast-math` 在 proot 下可能触发的 SIGSEGV。
-
-```bash
-git clone https://github.com/your/repo.git && cd repo
-make            # 直接能跑
-./binary        # 跑产物
-```
-
-如果你 `apk add` 装了带 hardlink 的包（gcc、binutils 等），apk wrapper 会自动修复失效的 hardlink —— 不需要手动 `ln -sf`。
-
-## 源码
-
-- **App + 构建脚本**：[samaidev/samdocker](https://github.com/samaidev/samdocker)（源码、构建文档、架构说明）
-- **Release**：本仓库（samdocker_r）—— 预编译 APK 直接下载
-- **内嵌的终端服务器**：[samaidev/samcommand](https://github.com/samaidev/samcommand)（Go 二进制，提供 web terminal）
+请在 https://github.com/samaidev/samdocker_r/issues 提交 issue，附上：
+- 手机型号和 Android 版本
+- SamDocker 版本号（应用主屏幕显示）
+- 复现步骤
+- 如有 logcat 片段也请附上
