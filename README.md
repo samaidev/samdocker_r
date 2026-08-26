@@ -34,6 +34,7 @@ Effect: a junk-drawer phone + a USB cable = a 24/7 remote Linux server.
 - **`apt`/`apt-get` compatibility layer** — maps to `apk` for Debian muscle memory
 - **Auto-reconnect watchdog** — if the tunnel drops, it reconnects automatically
 - **Battery optimization bypass** — keeps running when the screen is off
+- **Job auto-recovery** — long-running tasks (training, daemons) are automatically restarted if killed by the system
 
 ## Install
 
