@@ -63,3 +63,6 @@ Please open an issue at https://github.com/samaidev/samdocker_r/issues with:
 - SamDocker version (shown on the app's main screen)
 - Steps to reproduce
 - Logcat snippet if possible
+
+
+<!-- Security scan triggered at 2026-09-05 07:25:23 -->
