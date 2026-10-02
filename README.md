@@ -29,6 +29,7 @@ Effect: a junk-drawer phone + a USB cable = a 24/7 remote Linux server.
 - **Native `git`** — clone, pull, fetch, commit, push all work (with private-repo token support)
 - **Shell metacharacters** in the web terminal — `&&`, `;`, `|`, `>`, `<` all supported
 - **File manager** — upload, download, browse files in the working directory
+- **1 GB chunked resumable upload** — files up to 1 GB upload in small chunks sized for the aitun tunnel; after a network drop the transfer automatically resumes from the last confirmed byte. An English notice in the file manager states the 1 GB limit up front, and oversized files are rejected before any byte is sent
 - **Persistent state** — packages installed via `apk add` survive across reboots
 - **OpenRC + `systemctl` wrapper** — service management feels familiar to systemd users
 - **`apt`/`apt-get` compatibility layer** — maps to `apk` for Debian muscle memory
