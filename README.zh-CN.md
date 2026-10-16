@@ -23,7 +23,7 @@
 ## 功能特性
 
 - **无需 root** — 通过 `proot` 在用户空间运行
-- **完整 Alpine Linux** —— 预装 `bash`、`git`、`vim`、`curl`、`python3`、`gcc`、`openssh`、`tmux`
+- **完整 Alpine Linux** —— 预装 `bash`、`git`、`vim`、`curl`、`python3`、`gcc`、`openssh`、`tmux`（见[故障排查](./TROUBLESHOOTING.zh-CN.md)：v2.1.18 及之前的 rootfs 用 busybox 拷贝冒充 `/bin/bash`，显式调用 `bash` 会报 `bash: applet not found`）
 - **原生 git** —— clone、pull、fetch、commit、push 全部支持（私有仓库嵌入 token 即可）
 - **web terminal 支持元字符** —— `&&`、`;`、`|`、`>`、`<` 都能正常工作
 - **文件管理器** —— 上传、下载、浏览工作目录文件
@@ -53,6 +53,12 @@
 ## 升级
 
 新版 SamDocker 可以直接覆盖安装旧版 —— 已装的包、文件、token 都会保留。只需下载新的 `samdocker.apk` 点击安装即可，Android 会自动替换旧版本。
+
+## 故障排查
+
+见 [TROUBLESHOOTING.zh-CN.md](./TROUBLESHOOTING.zh-CN.md)（English: [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)）。目前包含：
+
+- `bash: applet not found` —— v2.1.18 及之前的 rootfs 上智能体报“bash 用不了”的根因、一行命令诊断法、无需 root 的绕过方案
 
 ## 反馈问题
 
