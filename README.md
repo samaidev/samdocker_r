@@ -25,7 +25,7 @@ Effect: a junk-drawer phone + a USB cable = a 24/7 remote Linux server.
 ## Features
 
 - **No root required** — runs entirely in user space via `proot`
-- **Full Alpine Linux** with `bash`, `git`, `vim`, `curl`, `python3`, `gcc`, `openssh`, `tmux`
+- **Full Alpine Linux** with `bash`, `git`, `vim`, `curl`, `python3`, `gcc`, `openssh`, `tmux` (see [Troubleshooting](./TROUBLESHOOTING.md): rootfs builds up to v2.1.18 ship a busybox-based `/bin/bash` stub that breaks explicit `bash` calls — `bash: applet not found`)
 - **Native `git`** — clone, pull, fetch, commit, push all work (with private-repo token support)
 - **Shell metacharacters** in the web terminal — `&&`, `;`, `|`, `>`, `<` all supported
 - **File manager** — upload, download, browse files in the working directory
@@ -56,6 +56,12 @@ Effect: a junk-drawer phone + a USB cable = a 24/7 remote Linux server.
 ## Upgrading
 
 New releases of SamDocker can be installed on top of old ones — your installed packages, files, and tokens persist. Just download the new `samdocker.apk` and tap install; Android will replace the old version.
+
+## Troubleshooting
+
+See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) (中文版: [TROUBLESHOOTING.zh-CN.md](./TROUBLESHOOTING.zh-CN.md)). Currently covers:
+
+- `bash: applet not found` — why agents report "bash is unavailable" on rootfs builds up to v2.1.18, how to diagnose it in one line, and a no-root workaround
 
 ## Reporting Issues
 
