@@ -50,6 +50,17 @@
 
 **最低要求：** Android 6.0（API 23）或更高，ARM 32 位或 64 位。
 
+### ⚠️ 重要：防止后台进程被杀（Android 12+）
+
+Android 12 及以上版本会积极杀掉 App 的子进程（幻影进程杀手 Phantom Process Killer）。这会导致 SamDocker 内部长时间运行的服务在息屏后死亡或冻僵。**安装后，将手机连接到有 ADB 的电脑，执行以下命令：**
+
+```bash
+adb shell settings put global settings_enable_monitor_phantom_procs false
+adb shell dumpsys deviceidle whitelist +com.samaidev.samdocker
+```
+
+这是**一次性设置**，重启后仍然有效。详见[故障排查](./TROUBLESHOOTING.zh-CN.md)。
+
 ## 升级
 
 新版 SamDocker 可以直接覆盖安装旧版 —— 已装的包、文件、token 都会保留。只需下载新的 `samdocker.apk` 点击安装即可，Android 会自动替换旧版本。
@@ -58,7 +69,8 @@
 
 见 [TROUBLESHOOTING.zh-CN.md](./TROUBLESHOOTING.zh-CN.md)（English: [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)）。目前包含：
 
-- `bash: applet not found` —— v2.1.18 及之前的 rootfs 上智能体报“bash 用不了”的根因、一行命令诊断法、无需 root 的绕过方案
+- **息屏后后台进程被杀/冻死（Android 12+）** —— 幻影进程杀手杀 App 子进程，一条 ADB 命令修复
+- `bash: applet not found` —— v2.1.18 及之前的 rootfs 上智能体报"bash 用不了"的根因、一行命令诊断法、无需 root 的绕过方案
 
 ## 反馈问题
 
