@@ -53,6 +53,17 @@ Effect: a junk-drawer phone + a USB cable = a 24/7 remote Linux server.
 
 **Minimum requirements:** Android 6.0 (API 23) or newer, ARM 32-bit or 64-bit.
 
+### ⚠️ Important: Prevent background process killing (Android 12+)
+
+On Android 12 and newer, the system aggressively kills app child processes (Phantom Process Killer). This causes long-running services inside SamDocker to die or freeze when the screen is off. **After installing, connect your phone to a computer with ADB and run:**
+
+```bash
+adb shell settings put global settings_enable_monitor_phantom_procs false
+adb shell dumpsys deviceidle whitelist +com.samaidev.samdocker
+```
+
+This is a **one-time setup** that persists across reboots. See [Troubleshooting](./TROUBLESHOOTING.md) for details.
+
 ## Upgrading
 
 New releases of SamDocker can be installed on top of old ones — your installed packages, files, and tokens persist. Just download the new `samdocker.apk` and tap install; Android will replace the old version.
@@ -61,6 +72,7 @@ New releases of SamDocker can be installed on top of old ones — your installed
 
 See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) (中文版: [TROUBLESHOOTING.zh-CN.md](./TROUBLESHOOTING.zh-CN.md)). Currently covers:
 
+- **Background processes killed/frozen when screen is off (Android 12+)** — Phantom Process Killer kills app child processes; fix with one ADB command
 - `bash: applet not found` — why agents report "bash is unavailable" on rootfs builds up to v2.1.18, how to diagnose it in one line, and a no-root workaround
 
 ## Reporting Issues
@@ -69,7 +81,4 @@ Please open an issue at https://github.com/samaidev/samdocker_r/issues with:
 - Phone model and Android version
 - SamDocker version (shown on the app's main screen)
 - Steps to reproduce
-- Logcat snippet if possible
-
-
-<!-- Security scan triggered at 2026-09-05 07:25:23 -->
+- Logcat snippets (if available)
