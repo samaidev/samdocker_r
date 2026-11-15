@@ -59,27 +59,64 @@ bash --version                  # "applet not found" ⇒ affected
 Install real bash into a private dir via an apk side-root, then prepend that dir to `PATH` for the process that needs bash:
 
 ```sh
-# 1. materialize real bash in an alternative root (no touching the locked file)
-apk add --initdb -p /tmp/broot \
-    --keys-dir /etc/apk/keys \
-    -X https://mirrors.aliyun.com/alpine/v3.20/main bash
-
-# 2. keep it somewhere persistent
+# Install real bash into ~/bashbin
 mkdir -p ~/bashbin
-cp /tmp/broot/bin/bash ~/bashbin/bash
-chmod 755 ~/bashbin/bash
-
-# 3. start the affected process with bashbin first in PATH
-PATH="$HOME/bashbin:$PATH" <your-agent-or-daemon>
+apk add --root ~/bashbin --initdb --no-cache bash
+# Now use it:
+export PATH=~/bashbin/usr/bin:$PATH
+bash --version   # GNU bash, version 5.2.26(1)-release
 ```
 
-Verify with `bash -c 'echo $BASH_VERSION'` — it should print `5.2.26(1)-release...`.
+For a permanent fix, add the `export PATH` line to `~/.profile` or `~/.bashrc`.
 
-Caveat: the PATH prepend only lives in the environment of the process you start it with. After a full app restart / service auto-recovery, the process may come back without the prepend — re-apply it, or use a launcher script that always exports `PATH`.
+---
 
-### Recommended source-level fix (rootfs build)
+## Background processes killed / frozen when screen is off (Android 12+)
 
-- The rootfs image must ship the real GNU `bash` binary at `/bin/bash`; never copy/hardlink busybox over it, even as a placeholder.
-- After image assembly, assert on the build host: `md5sum rootfs/bin/bash` differs from `rootfs/bin/busybox`, and `rootfs/bin/bash` is not a hardlink to busybox.
-- Keep `/bin/sh → /bin/bash` only if the real bash is present; otherwise point `/bin/sh` at busybox directly instead of the fake chain.
-- Consider exporting `SHELL=/bin/bash` in the exec environment (currently empty due to `env -i`).
+**Affected:** All SamDocker versions on Android 12 (API 31) and newer. Especially severe on Android 13–16.
+
+### Symptom
+
+Long-running processes started inside the SamDocker Linux environment (web servers, daemons, training jobs) silently die or freeze when the phone screen is off for a while. The process may still appear in `ps` (state `S`, wchan `futex_wait_queue_me`) but stops responding to network requests.
+
+### Root cause
+
+Android 12+ introduced the **Phantom Process Killer** (phantom process monitoring), which aggressively kills app child processes that consume too much CPU/memory over time. Processes started inside proot are treated as child processes of the SamDocker app — making them prime targets.
+
+Additionally, **Doze mode** restricts network access for apps not on the battery optimization whitelist, causing tunnels and HTTP servers to stop responding even if the process is still alive.
+
+### Fix (requires ADB, one-time setup)
+
+Connect the phone to a computer with ADB and run these three commands:
+
+```bash
+# 1. Disable Phantom Process Killer (most important!)
+adb shell settings put global settings_enable_monitor_phantom_procs false
+
+# 2. Add SamDocker to Doze whitelist (prevents network freeze)
+adb shell dumpsys deviceidle whitelist +com.samaidev.samdocker
+
+# 3. Disable battery optimization for SamDocker
+adb shell dumpsys deviceidle whitelist +com.samaidev.samdocker
+```
+
+**Step 1 is the critical fix.** It disables the system service that kills app child processes. This setting persists across reboots but may be reset after a major Android system update — re-run it if processes start dying again after an OS update.
+
+### Verification
+
+After applying the fixes, start a long-running process, turn off the screen, and check back after 30+ minutes. The process should still be alive and responding:
+
+```sh
+# Inside SamDocker terminal
+curl -s http://127.0.0.1:3000/   # should still respond
+```
+
+### Without ADB
+
+If you don't have a computer with ADB, you can partially mitigate via phone settings:
+
+1. **Settings → Apps → SamDocker → Battery → Unrestricted** (prevents Doze network restrictions)
+2. **Settings → Developer Options → Background process limit → Standard** (or "No limit")
+3. Keep the phone plugged into a charger (charging state reduces Doze aggression)
+
+Note: The Phantom Process Killer cannot be disabled without ADB — it has no UI toggle. If processes keep dying and you don't have ADB, the only workaround is to set up a watchdog that auto-restarts critical services (SamDocker's built-in JobMonitor does this for jobs with `# Binary:` directives in `~/.config/samdocker/jobs/`).
